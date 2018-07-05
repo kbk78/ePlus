@@ -1,0 +1,78 @@
+<html>
+
+<script src='https://d3js.org/d3.v4.min.js'></script>
+<fakescript src="bindata.js"></fakescript>
+<input type='file' id='f1' accept='text/plain' onchange='openFile(event)'><br>
+<input type='file' id='f2' accept='text/plain'><br>
+<span id='contents'></span>
+<h3></h3>
+
+
+<svg></svg>
+
+<hr></hr>
+
+<button></button>
+<ul></ul>
+</html>
+
+<script>
+  var openFile = function(event) {
+    var input = event.target;
+    var reader = new FileReader();
+    reader.readAsText(input.files[0]);
+    reader.onload = function(){
+    var text = reader.result;
+    d = d3.csvParse(text);
+    d3.select('#contents')
+      .append('h3')
+      .text(d[1]['a']);
+      console.log(d)
+     var d = d.map(function(d){ return [ +d["a"], +d["b"] ];});
+
+var barHeight = 20;
+var bar = d3.select('svg')
+          .selectAll('rect')
+          .data(d)
+          .enter()
+          .append('rect')
+          .attr('width', function(d) { return d; })
+          .attr('height', barHeight - 1)
+          .attr('transform', function(d, i) {
+            return "translate(0," + i * barHeight + ")";
+          });
+
+//     var x = d3.scaleBand()
+//        .domain(sales.map(function(sale){ return sale.bookingID; }))
+//        .range([0, width])
+//        .paddingInner([0.1])
+//
+//     var y = d3.scaleLinear()
+//        .range([height, 0])
+//        .domain([0, d3.max(sales.map(function(sale){ return sale['Total Paid']; }))]);
+
+//});        
+
+  };
+};
+
+
+//-----------------------------------------------------------------------
+ var fruits = ['temperature', 'humidity', 'enthalpy', 'wetbulb'];
+    d3.select('ul')
+        .selectAll('li')
+        .data(fruits)
+        .enter()
+        .append('li')
+        .text(function(d) { return d; });
+
+
+d3.select('button')
+        .on('click', function () {
+            d3.select('#contents')
+               .append('h3')
+               .text('Today is a beautiful day!!');
+        });
+
+
+</script>

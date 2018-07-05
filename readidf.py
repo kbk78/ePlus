@@ -87,7 +87,8 @@ class idf(object):
     def getnames(self,classname):
         for i in self.t.loc[classname].index.get_level_values(0).unique():print(i) 
 
-    def plotzones(self,floor=0,zdata=0):
+    def plotzones(self,floor=0,zdata=[]):
+        #ensure all zones are lowercase in the idf file as the zones are lowercase in the output file for merge to work
         from matplotlib.patches import Polygon
         from matplotlib.collections import PatchCollection
         import matplotlib.pyplot as plt
@@ -101,16 +102,16 @@ class idf(object):
         s['zn']=zn.repeat((self.t.loc['BuildingSurface:Detailed',fl,10:].groupby('name').size().values/3).astype('int'))
 
 
-        if not zdata:
+        if not len(zdata):
             zdata = s.groupby('zn').first().groupby('zn').ngroup()
 
 
         gr = s.groupby(s.index)
         ly = pd.DataFrame({'poly':gr.apply(lambda x:Polygon(x[['x','y']].values)),
-                      'zn':gr.first()['zn'],
-                      'z':gr.first()['z'],
-                      'zdata':zdata.repeat(gr.first().groupby('zn').size()).values})
-
+                      'zn':gr.first()['zn'].apply(lambda s:''.join(s.split(':'))),
+                      'z':gr.first()['z']})
+        zdata.name='zdata'
+        ly = pd.DataFrame(zdata).reset_index().merge(ly)      
 
         fig, ax = plt.subplots(1)
         ax.set_aspect('equal')
