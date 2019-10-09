@@ -1,9 +1,9 @@
 """
 Bharath Karambakkam
+--------------------
 e-mail:Bharath.karambakkam@imegcorp.com
 function: Load EnergyPlus output xml file (*.xml)
 """
-
 
 from xml.etree.ElementTree import parse 
 from numpy import array
@@ -50,10 +50,9 @@ class exml(object):
  def getall(self):
      r = pr.data(self.elem)
      for ea in['BuildingName','EnvironmentName','WeatherFileLocationTitle'
-             ,'ProgramVersion','SimulationTimestamp']:
-         r.pop(ea,None)
+             ,'ProgramVersion','SimulationTimestamp']:r.pop(ea,None)
      for ea in r:
-         if not 'monthly' in ea:  
+         if not all([ea in ['monthly','TariffReport']]):  
              for j in ['for','note','footnote','General']: r[ea].pop(j,None)
              for j in r[ea]:
                  if type(r[ea][j]) is list:
@@ -70,7 +69,7 @@ class exml(object):
                  for j in r[ea]:
                      v=pd.DataFrame(j['CustomMonthlyReport'])
                      v['zone'] = j['for']
-                     s=pd.concat([s,v])
+                     s=pd.concat([s,v],sort=True)
                  s=s.set_index(['zone','name'])     
                  self.__setattr__(ea,s)
              else:
@@ -83,13 +82,13 @@ class exml(object):
      s = pd.DataFrame(pr.data(c)['EndUses'][:-1]).set_index('name') *[1/3.412,1/100,1,1/1000,1/1000,1] #kwh,therm,,MMBtu,MMBtu,
      s = s.reset_index().melt(id_vars='name')
      s = s[s['value']>0]
-     s = s.set_index(s.name+':'+s.variable)['value']
+     s = s.set_index(s.name+'_'+s.variable)['value']
  
      c = self.elem.find('DemandEndUseComponentsSummary')
      sd = pd.DataFrame(pr.data(c)['EndUses'][:-1][1:]).set_index('name') *[1/3.412,1/100,1,1/1000,1/1000,1] #kwh,therm,,MMBtu,MMBtu,
      sd = sd.reset_index().melt(id_vars='name')
      sd = sd[sd['value']>0]
-     sd = sd.set_index(sd.name+':'+sd.variable+'Demand')['value']
+     sd = sd.set_index(sd.name+'_'+sd.variable+'Demand')['value']
      s = s.append(sd)
 
      c = self.elem.find('SystemSummary').findall('TimeSetpointNotMet')[-1]
@@ -111,5 +110,10 @@ class exml(object):
      s['oaCFM'] = pd.DataFrame(pr.data(self.elem.find('HvacSizingSummary').findall('ZoneSensibleCooling'))['ZoneSensibleCooling'])['MinimumOutdoorAirFlowRate'].sum()
      
      s['htgCFM'] = pd.DataFrame(pr.data(self.elem.find('HvacSizingSummary').findall('ZoneSensibleHeating'))['ZoneSensibleHeating'])['UserDesignAirFlow'].sum()
+
+     
+     s['totalcl'] = pd.DataFrame(pr.data([list(ea)[3] for ea in self.elem.findall('Coilreportmonthly')])['CustomMonthlyReport'])['AnnualSumOrAverage'].sum()
+     s['senscl'] = pd.DataFrame(pr.data([list(ea)[4] for ea in self.elem.findall('Coilreportmonthly')])['CustomMonthlyReport'])['AnnualSumOrAverage'].sum()
+     s['totalht'] = pd.DataFrame(pr.data([list(ea)[1] for ea in self.elem.findall('Coilreportmonthly')])['CustomMonthlyReport'])['AnnualSumOrAverage'].sum()
      return s
  

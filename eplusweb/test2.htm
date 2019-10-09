@@ -3,7 +3,6 @@
 <script src='https://d3js.org/d3.v4.min.js'></script>
 <fakescript src="bindata.js"></fakescript>
 <input type='file' id='f1' accept='text/plain' onchange='openFile(event)'><br>
-<input type='file' id='f2' accept='text/plain'><br>
 <span id='contents'></span>
 <h3></h3>
 
@@ -30,6 +29,7 @@
       console.log(d)
      var d = d.map(function(d){ return [ +d["a"], +d["b"] ];});
 
+
 var barHeight = 20;
 var bar = d3.select('svg')
           .selectAll('rect')
@@ -42,16 +42,15 @@ var bar = d3.select('svg')
             return "translate(0," + i * barHeight + ")";
           });
 
-//     var x = d3.scaleBand()
-//        .domain(sales.map(function(sale){ return sale.bookingID; }))
-//        .range([0, width])
-//        .paddingInner([0.1])
-//
-//     var y = d3.scaleLinear()
-//        .range([height, 0])
-//        .domain([0, d3.max(sales.map(function(sale){ return sale['Total Paid']; }))]);
+     var x = d3.scaleBand()
+        .domain(sales.map(function(sale){ return sale.bookingID; }))
+        .range([0, width])
+        .paddingInner([0.1])
 
-//});        
+     var y = d3.scaleLinear()
+        .range([height, 0])
+        .domain([0, d3.max(sales.map(function(sale){ return sale['Total Paid']; }))]);
+
 
   };
 };

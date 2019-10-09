@@ -98,7 +98,7 @@ class idf(object):
         nind=fl.repeat((self.t.loc['BuildingSurface:Detailed',fl,10:].groupby('name').size().values/3).astype('int'))
         s=pd.DataFrame(self.t.loc['BuildingSurface:Detailed',fl,10:].values.reshape(-1,3),columns=['x','y','z'],index=nind).apply(pd.to_numeric)
 
-        zn = self.t.loc['BuildingSurface:Detailed',fl,[3]].values
+        zn = self.t.loc['BuildingSurface:Detailed',fl,[3]].apply(lambda s:''.join(s.split(':'))).values
         s['zn']=zn.repeat((self.t.loc['BuildingSurface:Detailed',fl,10:].groupby('name').size().values/3).astype('int'))
 
 
@@ -108,7 +108,7 @@ class idf(object):
 
         gr = s.groupby(s.index)
         ly = pd.DataFrame({'poly':gr.apply(lambda x:Polygon(x[['x','y']].values)),
-                      'zn':gr.first()['zn'].apply(lambda s:''.join(s.split(':'))),
+                      'zn':gr.first()['zn'],
                       'z':gr.first()['z']})
         zdata.name='zdata'
         ly = pd.DataFrame(zdata).reset_index().merge(ly)      
