@@ -60,6 +60,7 @@ class exml(object):
                  else:
                      self.__setattr__(ea+'1'+j,pd.Series(r[ea][j]))
 
+
  def getmonthly(self):
      r = pr.data(self.elem)
      for ea in r:
@@ -75,6 +76,54 @@ class exml(object):
              else:
                  pd.DataFrame(r[ea]['CustomMonthlyReport'])
                  self.__setattr__(ea,pd.DataFrame(r[ea]['CustomMonthlyReport']))
+
+
+ def getLEEDprm(self):
+     self.getall()
+
+     prmres = self.LeedSummary1Eap245PerformanceRatingMethodCompliance * (1,1/1000,100,1/1000,1,1/1000,12,12,1,1/1000)
+
+     idx = [('InteriorLightingGeneral','ElectricEnergyUse'),
+            ('InteriorLightingGeneral','ElectricDemand'),
+            ('ExteriorLightingGeneral','ElectricEnergyUse'),
+            ('ExteriorLightingGeneral','ElectricDemand'),
+            ('HeatingNotSubdivided','NaturalGasEnergyUse'),
+            ('HeatingNotSubdivided','NaturalGasDemand'),
+            ('CoolingNotSubdivided','ElectricEnergyUse'),
+            ('CoolingNotSubdivided','ElectricDemand'),
+            ('PumpsGeneral','ElectricEnergyUse'),
+            ('PumpsGeneral','ElectricDemand'),
+            ('HeatRejectionNotSubdivided','ElectricEnergyUse'),
+            ('HeatRejectionNotSubdivided','ElectricDemand'),
+            ('FansGeneral','ElectricEnergyUse'),
+            ('FansGeneral','ElectricDemand'),
+            ('ExteriorEquipmentNotSubdivided','ElectricEnergyUse'),
+            ('ExteriorEquipmentNotSubdivided','ElectricDemand'),
+            ('WaterSystemsGeneral','NaturalGasEnergyUse'),
+            ('WaterSystemsGeneral','NaturalGasDemand'),
+            ('InteriorEquipmentGeneral','ElectricEnergyUse'),
+            ('InteriorEquipmentGeneral','ElectricDemand'),
+            ('ExteriorEquipmentNotSubdivided','ElectricEnergyUse'),
+            ('ExteriorEquipmentNotSubdivided','ElectricDemand'),
+            ('ExteriorEquipmentNotSubdivided','ElectricEnergyUse'),
+            ('ExteriorEquipmentNotSubdivided','ElectricDemand'),
+            ('RefrigerationGeneral','ElectricEnergyUse'),
+            ('RefrigerationGeneral','ElectricDemand'),
+            ('ExteriorEquipmentNotSubdivided','ElectricEnergyUse'),
+            ('ExteriorEquipmentNotSubdivided','ElectricDemand'),
+            ('ExteriorEquipmentNotSubdivided','ElectricEnergyUse'),
+            ('ExteriorEquipmentNotSubdivided','ElectricDemand'),
+            ('ExteriorEquipmentNotSubdivided','ElectricEnergyUse'),
+            ('ExteriorEquipmentNotSubdivided','ElectricDemand'),
+            ('ExteriorEquipmentNotSubdivided','ElectricEnergyUse'),
+            ('ExteriorEquipmentNotSubdivided','ElectricDemand'),
+            ('ExteriorEquipmentNotSubdivided','ElectricEnergyUse'),
+            ('ExteriorEquipmentNotSubdivided','ElectricDemand'),
+            ('HeatingNotSubdivided','ElectricEnergyUse'),
+            ('HeatingNotSubdivided','ElectricDemand')]
+
+     return prmres.stack().loc[idx]
+
 
  def getstd(self):
      

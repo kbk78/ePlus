@@ -29,7 +29,7 @@ class idf(object):
         with open(self.name,'r') as f: idf=re.sub('!.*|\t','',f.read()).replace('\n','')
         
 
-        dstr = '(Output:Variable|Output:Surfaces:Drawing|Output:Meter)'
+        dstr = '(Output:Variable|Output:Surfaces:Drawing|Output:Meter|FluidProperties:Saturated|FluidProperties:Superheated)'
         idf  = re.sub(' *'+dstr+'.*?;','',idf)
 
         idf = re.sub(r'( *)(,|;)( *)',r'\2',idf)
@@ -92,6 +92,7 @@ class idf(object):
         from matplotlib.patches import Polygon
         from matplotlib.collections import PatchCollection
         import matplotlib.pyplot as plt
+        import matplotlib
 
         f = (self.t.loc['BuildingSurface:Detailed',:,1] =='Floor').reset_index()
         fl = f[f['val']]['name'].values
@@ -119,10 +120,13 @@ class idf(object):
         ax.set_ylim([s.min()['y'],s.max()['y']])
 
         gr=ly.groupby('z')
-        p = PatchCollection(gr.get_group(list(gr.groups.keys())[floor])['poly'].values)
+        p = PatchCollection(gr.get_group(list(gr.groups.keys())[floor])['poly'].values, cmap=matplotlib.cm.jet)
+
         ax.add_collection(p)
         p.set_array(gr.get_group(list(gr.groups.keys())[floor])['zdata'].values)
         plt.colorbar(p)
+
+#        plt.pcolor(p)
         plt.show()
 
 

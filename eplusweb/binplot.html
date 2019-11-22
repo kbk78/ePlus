@@ -13,11 +13,16 @@
   font: 8px sans-serif;
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 3841f69f37e77019c0182463dad6a5c983053978
 .bar:hover {
   fill: green;
 }
  
 </style>
+<<<<<<< HEAD
 <div>
 <label for="NoofBins">No of Bins</label>
 <input name='NoofBins' type='number' id='nobins',required value="20"> <br>
@@ -29,6 +34,9 @@
 <input name='weatherFile' type='file' id='f1' accept='.epw' onchange='openFile(event)'><br>
 </div>
 
+=======
+<input type='file' id='f1' accept='.epw' onchange='openFile(event)'><br>
+>>>>>>> 3841f69f37e77019c0182463dad6a5c983053978
 </body>
 <div id = 'ch1'></div>
 <svg class="histchart"></svg>
@@ -47,6 +55,7 @@ var openFile = function(event){
              width = 950 - margin.left - margin.right,
              height = 500 - margin.top - margin.bottom;
 
+<<<<<<< HEAD
 console.log(d3.select('#nobins').node().value)
 var x = d3.scaleLinear()
     .domain(d3.extent(values)).nice()
@@ -59,11 +68,30 @@ var hist = d3.histogram()
    var bins = hist(values);
 
    var yMax = d3.max(bins, function(d){return d.length});
+=======
+bins = [-10,0,10,20,30,40,50,60,70,80,90,100,110]
+
+var x = d3.scaleBand()
+          .rangeRound([0,width])
+          .domain(bins)
+          .padding(0.1);
+
+   var hist = d3.histogram().domain([-10,110]).thresholds(bins);
+
+   var data = hist(values);
+
+   var yMax = d3.max(data, function(d){return d.length});
+   var yMin = d3.min(data, function(d){return d.length});
+>>>>>>> 3841f69f37e77019c0182463dad6a5c983053978
    var y = d3.scaleLinear()
              .domain([0, yMax])
              .rangeRound([height,0]);
 
+<<<<<<< HEAD
 //   d3.select('svg').remove();
+=======
+   d3.select('svg').remove();
+>>>>>>> 3841f69f37e77019c0182463dad6a5c983053978
    var svg = d3.select("#ch1")
                .append("svg")
                .attr("width", width + margin.left + margin.right)
@@ -71,6 +99,7 @@ var hist = d3.histogram()
                .append("g")
                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+<<<<<<< HEAD
 
   const bar = svg.append("g")
     .attr("fill", "steelblue")
@@ -114,13 +143,37 @@ svg.append("g")
         .attr("font-weight", "bold")
 //        .attr("text-anchor", "end")
         .text('Hours'));
+=======
+var bar = svg.selectAll(".bar")
+   .data(data)
+   .enter().append("g")
+   .attr("class", "bar")
+   .attr("transform", function(d) { return "translate(" + x(d.x0) + "," + y(d.length) + ")"; });
+
+bar.append("rect")
+   .attr("width", x.bandwidth())
+   .attr("height", function(d) { return height - y(d.length); })
+
+svg.append("g")
+      .attr("transform", "translate(0," +(height).toString()+")")
+      .call(d3.axisBottom(x))
+
+
+  // add the y Axis
+svg.append("g")
+      .call(d3.axisLeft(y));
+>>>>>>> 3841f69f37e77019c0182463dad6a5c983053978
 
 
 bar.append("text")
     .attr("dy", ".75em")
     .attr("y", 6)
 //    .attr("x", (x(data[0].x0) - x(data[1].x0)) / 2)
+<<<<<<< HEAD
     .attr("x", (x(bins[0].x0)+6))
+=======
+    .attr("x", (x(data[0].x0)+6))
+>>>>>>> 3841f69f37e77019c0182463dad6a5c983053978
 //    .attr("text-anchor", "middle")
     .text(function(d) { return d.length;
      });
